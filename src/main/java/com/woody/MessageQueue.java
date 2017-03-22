@@ -1,6 +1,7 @@
 package com.woody;
 
 import org.apache.activemq.command.ActiveMQQueue;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,10 @@ import javax.jms.Queue;
  */
 @Component
 public class MessageQueue {
+    @Value("${speaker.queue}")
+    private String queue;
     @Bean
     public Queue queue(){
-        return new ActiveMQQueue("my-message");
+        return new ActiveMQQueue(queue);
     }
 }

@@ -1,0 +1,30 @@
+<html>
+<head>
+    <title>语音配置信息</title>
+</head>
+<body>
+<h2>语音配置信息</h2>
+
+<div th:unless="${#lists.isEmpty(config)}">
+
+    <ul>
+        <li> 音量: <span th:text="${config.volume}"></span></li>
+        <li> 速度: <span th:text="${config.rate}"></span></li>
+        <li> 地址: <span th:text="${config.url}"></span></li>
+        <li> 队列: <span th:text="${config.queue}"></span></li>
+    </ul>
+
+    <form id="iform" th:action="@{/config.html?test}" th:method="post">
+
+    <input type="submit" value="测试"></input>
+    </form>
+
+</div>
+
+<hr/>
+
+<span>提示:可以通过修改jar包中的application.properties进行配置</span>
+
+
+</body>
+</html>

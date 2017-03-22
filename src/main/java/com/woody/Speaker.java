@@ -3,6 +3,7 @@ package com.woody;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -15,15 +16,21 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Speaker {
-    @JmsListener(destination="my-message")
+
+    @Value("${speaker.volume}")
+    private  String volume;
+    @Value("${speaker.rate}")
+    private String rate;
+
+    @JmsListener(destination="${speaker.queue}")
     public void removeMessage(String msg){
 
         ActiveXComponent sap = new ActiveXComponent("Sapi.SpVoice");
         Dispatch sapo = sap.getObject();
         try {
 
-            sap.setProperty("Volume", new Variant(100));
-            sap.setProperty("Rate", new Variant(-2));
+            sap.setProperty("Volume", new Variant(Integer.parseInt(volume)));
+            sap.setProperty("Rate", new Variant(Integer.parseInt(rate)));
 
             Variant defalutVoice = sap.getProperty("Voice");
 
