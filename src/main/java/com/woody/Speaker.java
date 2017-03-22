@@ -25,6 +25,7 @@ public class Speaker {
     @JmsListener(destination="${speaker.queue}")
     public void removeMessage(String msg){
 
+        //Where is the Sapi.SpVoice? How can I find it in the windows server?
         ActiveXComponent sap = new ActiveXComponent("Sapi.SpVoice");
         Dispatch sapo = sap.getObject();
         try {
@@ -44,7 +45,7 @@ public class Speaker {
 
             Variant item = Dispatch.call(setvoiceActivex, "GetDescription");
             // 执行朗读
-                Dispatch.call(sapo, "Speak", new Variant(msg));
+            Dispatch.call(sapo, "Speak", new Variant(msg));
 
 
         } catch (Exception e) {
