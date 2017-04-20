@@ -28,6 +28,12 @@ public class SpeakerConfigController {
     private String url;
     @Value("${speaker.queue}")
     private String queuename;
+    @Value("${speaker.content}")
+    private String content;
+    @Value("${speaker.orgcode}")
+    private String orgcode;
+    @Value("${speaker.level}")
+    private String level;
 
     @Autowired
     private JmsMessagingTemplate jmsMessagingTemplate;//使用JmsMessagingTemplate将消息放入队列
@@ -43,6 +49,9 @@ public class SpeakerConfigController {
         sc.setUrl(url);
         sc.setVolume(volume);
         sc.setQueue(queuename);
+        sc.setContent(content);
+        sc.setLevel(level);
+        sc.setOrgcode(orgcode);
         model.addAttribute("config",sc);
         return "config";
     }
@@ -50,7 +59,8 @@ public class SpeakerConfigController {
 
     @RequestMapping(params = {"test"}, method = RequestMethod.POST)
     public String configTest(Model model){
-        jmsMessagingTemplate.convertAndSend(this.queue, "恭喜您测试语音正常");
+
+        jmsMessagingTemplate.convertAndSend(this.queue, "测试语音:恭喜您测试语音正常");
         return "redirect:/config";
     }
 

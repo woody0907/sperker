@@ -18,12 +18,18 @@ import org.springframework.stereotype.Component;
 public class Speaker {
 
     @Value("${speaker.volume}")
-    private  String volume;
+    private String volume;
     @Value("${speaker.rate}")
     private String rate;
+    @Value("${speaker.content}")
+    private String content;
+    @Value("${speaker.orgcode}")
+    private String orgcode;
+    @Value("${speaker.level}")
+    private String level;
 
-    @JmsListener(destination="${speaker.queue}")
-    public void removeMessage(String msg){
+    @JmsListener(destination = "${speaker.queue}")
+    public void removeMessage(String msg) {
 
         //Where is the Sapi.SpVoice? How can I find it in the windows server?
         ActiveXComponent sap = new ActiveXComponent("Sapi.SpVoice");
@@ -45,7 +51,14 @@ public class Speaker {
 
             Variant item = Dispatch.call(setvoiceActivex, "GetDescription");
             // 执行朗读
-            Dispatch.call(sapo, "Speak", new Variant(msg));
+            if (messageFilter(msg)) {
+                Dispatch.call(sapo, "Speak", new Variant(msg.split("@")[1]));
+            }
+            if (msg.startsWith("测试语音")) {
+                Dispatch.call(sapo, "Speak", new Variant(msg));
+            }
+
+            //
 
 
         } catch (Exception e) {
@@ -54,5 +67,44 @@ public class Speaker {
             sapo.safeRelease();
             sap.safeRelease();
         }
+    }
+
+    /**
+     * @param message 格式如下：
+     *  SGBB@一级告警:PING不通,怎么都PING不通，哎呀！
+     * @return
+     */
+    private boolean messageFilter(String message) {
+        boolean isLevle = false;
+        boolean isOrgcode = false;
+        boolean isContent = false;
+        if (message != null) {
+            String[] mess = message.split("@");
+            if (mess.length > 1) {
+                String code = mess[0];
+                String messgeBody = mess[1];
+                if (orgcode != null && orgcode.equals(code) && messgeBody != null) {
+                    isOrgcode = true;
+                    if (content != null) {
+                        String[] contentArray = content.split(",");
+                        for (String filter : contentArray) {
+                            String upperBody = messgeBody.toUpperCase();
+                            if (upperBody.contains(filter)) {
+                                isContent = true;
+                            }
+                        }
+                    }
+                    if (level != null) {
+                        String[] levelArray = level.split("@");
+                        for (String ll : levelArray) {
+                            if (messgeBody.contains(ll)) {
+                                isLevle = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return isLevle && isOrgcode && isContent;
     }
 }

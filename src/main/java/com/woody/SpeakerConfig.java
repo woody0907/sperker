@@ -16,6 +16,10 @@ public class SpeakerConfig {
     private String  rate;
     private String  url;
     private String queue;
+    private String level;
+    private String orgcode;
+    private String content;
+
 
     public Long getId() {
         return id;
@@ -55,5 +59,29 @@ public class SpeakerConfig {
 
     public void setQueue(String queue) {
         this.queue = queue;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getOrgcode() {
+        return orgcode;
+    }
+
+    public void setOrgcode(String orgcode) {
+        this.orgcode = orgcode;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

@@ -8,10 +8,13 @@
 <div th:unless="${#lists.isEmpty(config)}">
 
     <ul>
-        <li> 音量: <span th:text="${config.volume}"></span></li>
-        <li> 速度: <span th:text="${config.rate}"></span></li>
-        <li> 地址: <span th:text="${config.url}"></span></li>
-        <li> 队列: <span th:text="${config.queue}"></span></li>
+        <li> 播放音量: <span th:text="${config.volume}"></span></li>
+        <li> 播放速度: <span th:text="${config.rate}"></span></li>
+        <li> 消息地址: <span th:text="${config.url}"></span></li>
+        <li> 消息队列: <span th:text="${config.queue}"></span></li>
+        <li> 告警级别: <span th:text="${config.level}"></span></li>
+        <li> 告警内容: <span th:text="${config.content}"></span></li>
+        <li> 告警组织: <span th:text="${config.orgcode}"></span></li>
     </ul>
 
     <form id="iform" th:action="@{/config.html?test}" th:method="post">
