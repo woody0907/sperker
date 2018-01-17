@@ -3,6 +3,7 @@ package com.woody;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,9 @@ public class Speaker {
     private String orgcode;
     @Value("${speaker.level}")
     private String level;
+
+    @Autowired
+    private IRedisService redisService;
 
     @JmsListener(destination = "${speaker.queue}")
     public void removeMessage(String msg) {
@@ -55,7 +59,8 @@ public class Speaker {
                 Dispatch.call(sapo, "Speak", new Variant(msg.split("@")[1]));
             }
             if (msg.startsWith("测试语音")) {
-                Dispatch.call(sapo, "Speak", new Variant(msg));
+                String name = redisService.get("name");
+                Dispatch.call(sapo, "Speak", new Variant(name + msg));
             }
 
             //
