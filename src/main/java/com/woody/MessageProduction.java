@@ -23,6 +23,6 @@ public class MessageProduction {
     private Queue queue;
 //    @Scheduled(fixedDelay = 3000)//每3s执行1次,将消息放入队列内
 //    public void send() {
-//        this.jmsMessagingTemplate.convertAndSend(this.queue, "测试消息队列" + System.currentTimeMillis() / 1000);
+//        this.jmsMessagingTemplate.convertAndSend(this.queue, "SGBB@一级告警:2018-01-17 17:28:27;FJ-ZHN2机房AA机柜02U内网接入2号交换机;IP地址:8.143.184.250;{连通性}等于0");
 //    }
 }

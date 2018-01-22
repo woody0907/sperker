@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,7 +33,7 @@ public class Speaker {
     @Autowired
     private IRedisService redisService;
 
-    @JmsListener(destination = "${speaker.queue}")
+    @JmsListener(destination = "${speaker.queue}", containerFactory = "jmsListenerContainerTopic")
     public void removeMessage(String msg) {
 
         //Where is the Sapi.SpVoice? How can I find it in the windows server?
@@ -56,16 +57,13 @@ public class Speaker {
             Variant item = Dispatch.call(setvoiceActivex, "GetDescription");
             // 执行朗读
             if (messageFilter(msg)) {
-                Dispatch.call(sapo, "Speak", new Variant(msg.split("@")[1]));
+                Dispatch.call(sapo, "Speak", new Variant(msg.split(";", 2)[1]));
             }
+            // todo  need to modify in product enviroment
             if (msg.startsWith("测试语音")) {
-                String name = redisService.get("name");
-                Dispatch.call(sapo, "Speak", new Variant(name + msg));
+//                String name = redisService.get("name");
+                Dispatch.call(sapo, "Speak", new Variant(msg));
             }
-
-            //
-
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -76,7 +74,7 @@ public class Speaker {
 
     /**
      * @param message 格式如下：
-     *  SGBB@一级告警:PING不通,怎么都PING不通，哎呀！
+     *                SGBB@一级告警:PING不通,怎么都PING不通，哎呀！
      * @return
      */
     private boolean messageFilter(String message) {
@@ -95,7 +93,17 @@ public class Speaker {
                         for (String filter : contentArray) {
                             String upperBody = messgeBody.toUpperCase();
                             if (upperBody.contains(filter)) {
-                                isContent = true;
+                                //redis 查询
+                                try {
+                                    String rediskey = messgeBody.split(";", 3)[2];
+                                    if (!StringUtils.isEmpty(redisService.get(rediskey))) {
+                                        isContent = false;
+                                    } else {
+                                        isContent = true;
+                                    }
+                                } catch (Exception e) {
+                                    isContent = true;
+                                }
                             }
                         }
                     }
